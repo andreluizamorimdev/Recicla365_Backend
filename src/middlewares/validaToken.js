@@ -5,11 +5,9 @@ function validaToken(request, response, next) {
     const token = request.headers.authorization;
 
     if (!token) {
-      return response
-        .status(400)
-        .json({
-          message: "É necessário estar autenticado para acessar esse recurso"
-        });
+      return response.status(401).json({
+        message: "É necessário estar autenticado para acessar esse recurso"
+      });
     }
 
     const tokenTratado = token.split(" ")[1];
