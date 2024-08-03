@@ -7,7 +7,8 @@ const {
   listarLocaisColeta,
   listarLocalColetaEspecifico,
   alterarLocalColeta,
-  excluirLocalColeta
+  excluirLocalColeta,
+  listarLinkGoogleMaps
 } = require("../controllers/LocalColetaController");
 
 const localColetaRoutes = new Router();
@@ -21,5 +22,6 @@ localColetaRoutes.put(
   alterarLocalColeta
 );
 localColetaRoutes.delete("/:local_id", excluirLocalColeta);
+localColetaRoutes.get("/:local_id/maps", listarLinkGoogleMaps);
 
 module.exports = localColetaRoutes;

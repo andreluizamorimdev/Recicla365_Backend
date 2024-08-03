@@ -235,6 +235,42 @@ class LocalColetaController {
         .json({ message: "Erro ao excluir local de coleta" });
     }
   }
+
+  async listarLinkGoogleMaps(request, response) {
+    try {
+      const { local_id } = request.params;
+
+      const usuarioId = request.usuarioId;
+
+      if (!usuarioId) {
+        return response
+          .status(401)
+          .json({ message: "Usuário não autenticado" });
+      }
+
+      const localColeta = await LocalColeta.findOne({
+        where: { id: local_id, usuario_id: usuarioId }
+      });
+
+      if (!localColeta) {
+        return response
+          .status(404)
+          .json({ message: "Local de coleta não encontrado" });
+      } else if (localColeta.usuario_id !== usuarioId) {
+        return response
+          .status(403)
+          .json({ message: "Usuário não autorizado a acessar este recurso" });
+      }
+
+      return response.status(200).json({ link_maps: localColeta.link_maps });
+    } catch (error) {
+      console.log(error);
+      return response.status(500).json({
+        message:
+          "Erro ao listar link do Google Maps com o Local Específico do Usuário"
+      });
+    }
+  }
 }
 
 module.exports = new LocalColetaController();
