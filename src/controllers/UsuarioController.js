@@ -21,7 +21,7 @@ class UsuarioController {
 
       const usuario = await Usuario.create({
         nome,
-        sexo: sexo.toUpperCase(),
+        sexo,
         CPF,
         endereco,
         email,
