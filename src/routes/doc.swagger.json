@@ -1,0 +1,484 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API Recicla365",
+    "description": "Documentação da API Recicla365, que tem como objetivo facilitar o gerenciamento de resíduos e o acesso a pontos de coleta de materiais recicláveis. Nesta os usuários podem cadastrar novos pontos de coleta, encontrar os pontos de coleta cadastrados, visualizar informações sobre os materiais aceitos em cada ponto e registrar suas próprias contribuições para a reciclagem. Esta API foi desenvolvida com Node.js, Express e Sequelize.",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "apiKeyAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization",
+      "description": "Insira o token JWT"
+    }
+  },
+  "paths": {
+    "/usuario/": {
+      "post": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "Endpoint para criar um novo usuário.",
+        "parameters": [
+          {
+            "name": "criarUsuario",
+            "in": "body",
+            "description": "Dados do novo usuário.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "Administrador"
+                },
+                "sexo": {
+                  "type": "string",
+                  "example": "MASCULINO"
+                },
+                "CPF": {
+                  "type": "string",
+                  "example": "00322211121"
+                },
+                "endereco": {
+                  "type": "string",
+                  "example": "Rua dos testes, 5000, Real Parque, São José, SC"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "admin@recicla.com"
+                },
+                "senha": {
+                  "type": "string",
+                  "example": "admin123"
+                },
+                "data_nascimento": {
+                  "type": "string",
+                  "example": "02-10-1999"
+                }
+              },
+              "required": [
+                "nome",
+                "sexo",
+                "CPF",
+                "endereco",
+                "email",
+                "senha",
+                "data_nascimento"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/login/": {
+      "post": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "Endpoint para realizar o login de um usuário.",
+        "parameters": [
+          {
+            "name": "login",
+            "in": "body",
+            "description": "Dados do usuário para login.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "admin@recicla.com"
+                },
+                "senha": {
+                  "type": "string",
+                  "example": "admin123"
+                }
+              },
+              "required": [
+                "email",
+                "senha"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/local/": {
+      "post": {
+        "tags": [
+          "Locais de coleta"
+        ],
+        "description": "Endpoint para criar um novo local de coleta.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "criarLocalColeta",
+            "in": "body",
+            "description": "Dados do novo local de coleta.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome_local": {
+                  "type": "string",
+                  "example": "Angeloni florianopolis"
+                },
+                "descricao": {
+                  "type": "string",
+                  "example": "Ponto de coleta para eletronicos"
+                },
+                "tipo_residuo": {
+                  "type": "string",
+                  "example": "eletronico"
+                },
+                "cep": {
+                  "type": "string",
+                  "example": "88085-001"
+                },
+                "logradouro": {
+                  "type": "string",
+                  "example": "Av. Gov. Ivo Silveira"
+                },
+                "numero": {
+                  "type": "string",
+                  "example": "2445"
+                },
+                "bairro": {
+                  "type": "string",
+                  "example": "Capoeiras"
+                },
+                "estado": {
+                  "type": "string",
+                  "example": "SC"
+                },
+                "cidade": {
+                  "type": "string",
+                  "example": "Florianópolis"
+                }
+              },
+              "required": [
+                "nome_local",
+                "descricao",
+                "tipo_residuo",
+                "cep",
+                "logradouro",
+                "numero",
+                "bairro",
+                "estado",
+                "cidade"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Locais de coleta"
+        ],
+        "description": "Endpoint para listar todos os locais de coleta do usuario.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "tipo_residuo",
+            "in": "query",
+            "description": "Tipo de resíduo para filtrar",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/local/{local_id}": {
+      "get": {
+        "tags": [
+          "Locais de coleta"
+        ],
+        "description": "Endpoint para listar um local de coleta específico.",
+        "parameters": [
+          {
+            "name": "local_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do local de coleta"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Locais de coleta"
+        ],
+        "description": "Endpoint para alterar um local de coleta.",
+        "parameters": [
+          {
+            "name": "local_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do local de coleta"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "alterarLocalColeta",
+            "in": "body",
+            "description": "Dados do local de coleta para alteração.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome_local": {
+                  "type": "string",
+                  "example": "Angeloni florianopolis"
+                },
+                "descricao": {
+                  "type": "string",
+                  "example": "Ponto de coleta para eletronicos"
+                },
+                "tipo_residuo": {
+                  "type": "string",
+                  "example": "eletronico"
+                },
+                "cep": {
+                  "type": "string",
+                  "example": "88085-001"
+                },
+                "logradouro": {
+                  "type": "string",
+                  "example": "Av. Gov. Ivo Silveira"
+                },
+                "numero": {
+                  "type": "string",
+                  "example": "2445"
+                },
+                "bairro": {
+                  "type": "string",
+                  "example": "Capoeiras"
+                },
+                "estado": {
+                  "type": "string",
+                  "example": "SC"
+                },
+                "cidade": {
+                  "type": "string",
+                  "example": "Florianópolis"
+                }
+              },
+              "required": [
+                "nome_local",
+                "descricao",
+                "tipo_residuo",
+                "cep",
+                "logradouro",
+                "numero",
+                "bairro",
+                "estado",
+                "cidade"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Locais de coleta"
+        ],
+        "description": "Endpoint para excluir um local de coleta.",
+        "parameters": [
+          {
+            "name": "local_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do local de coleta"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/local/{local_id}/maps": {
+      "get": {
+        "tags": [
+          "Locais de coleta"
+        ],
+        "description": "Endpoint para listar o link do Google Maps de um local de coleta.",
+        "parameters": [
+          {
+            "name": "local_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID do local de coleta"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ]
+}
