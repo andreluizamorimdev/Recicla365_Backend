@@ -6,6 +6,11 @@ const validaToken = require("../middlewares/validaToken");
 
 const routes = new Router();
 
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./doc.swagger.json");
+
+routes.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 routes.use("/usuario", usuariosRoutes);
 routes.use("/login", loginRoutes);
 
