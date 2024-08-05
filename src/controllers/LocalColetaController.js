@@ -55,9 +55,8 @@ class LocalColetaController {
   async listarLocaisColeta(request, response) {
     try {
       const filtro = request.query;
-
       const usuarioId = request.usuarioId;
-
+      console.log(usuarioId);
       if (!usuarioId) {
         return response
           .status(401)
@@ -69,21 +68,27 @@ class LocalColetaController {
           where: { usuario_id: usuarioId, tipo_residuo: filtro.tipo_residuo }
         });
 
-        if (!locaisColeta) {
-          return response
-            .status(404)
-            .json({ message: "Nenhum local de coleta encontrado" });
-        } else if (locaisColeta.usuario_id !== usuarioId) {
-          return response
-            .status(403)
-            .json({ message: "Usuário não autorizado a acessar este recurso" });
-        }
+        locaisColeta.map((local) => {
+          if (local.usuario_id !== usuarioId) {
+            return response.status(403).json({
+              message: "Usuário não autorizado a acessar este recurso"
+            });
+          }
+        });
 
         return response.status(200).json(locaisColeta);
       }
 
       const locaisColeta = await LocalColeta.findAll({
         where: { usuario_id: usuarioId }
+      });
+
+      locaisColeta.map((local) => {
+        if (local.usuario_id !== usuarioId) {
+          return response
+            .status(403)
+            .json({ message: "Usuário não autorizado a acessar este recurso" });
+        }
       });
 
       return response.status(200).json(locaisColeta);
